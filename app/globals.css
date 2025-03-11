@@ -1,26 +1,131 @@
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary-hover: var(--primary-hover);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+    /* Light theme colors */
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+
+    /* Primary: red tone with white text for contrast */
+    --primary: oklch(0.577 0.245 27.325); /* E74C3C */
+    --primary-foreground: oklch(1 0 0); /* white */
+    --primary-hover: oklch(0.58 0.1854 28.1);
+
+    /* Secondary: light background with dark text */
+    --secondary: oklch(0.97 0 0); /* ECF0F1 */
+    --secondary-foreground: oklch(0.145 0 0);
+
+    /* Muted: similar to secondary */
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+
+    /* Accent: same as muted for now */
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.145 0 0);
+
+    /* Destructive: same red tone but with white text */
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(1 0 0);
+
+    /* Success: green tone with white text */
+    --success: oklch(0.646 0.222 141.116); /* 27AE60 */
+    --success-foreground: oklch(1 0 0);
+
+    /* Other UI elements */
+    --border: oklch(0.9 0.02 0);
+    --input: oklch(0.82 0 0);
+    --ring: oklch(0.577 0.245 27.325 / 0.8);
+
+    --chart-1: oklch(0.577 0.245 27.325);
+    --chart-2: oklch(0.646 0.222 141.116);
+
+    --radius: 0.5rem;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.dark {
+    /* Dark theme colors */
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+
+    /* Keep primary consistent */
+    --primary: oklch(0.577 0.245 27.325);
+    --primary-foreground: oklch(1 0 0);
+
+    /* Invert secondary: dark background with light text */
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+
+    /* Invert muted and accent for dark mode */
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+
+    /* Destructive remains the same red tone with white text */
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(1 0 0);
+
+    /* Success stays */
+    --success: oklch(0.646 0.222 141.116);
+    --success-foreground: oklch(1 0 0);
+
+    /* Other UI elements remain unchanged */
+    --border: oklch(0.85 0 0);
+    --input: oklch(0.82 0 0);
+    --ring: oklch(0.577 0.245 27.325 / 0.8);
+    --chart-1: oklch(0.577 0.245 27.325);
+    --chart-2: oklch(0.646 0.222 141.116);
+}
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
 }
