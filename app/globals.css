@@ -45,12 +45,14 @@
     --popover-foreground: oklch(0.145 0 0);
 
     /* Primary: red tone with white text for contrast */
-    --primary: oklch(0.577 0.245 27.325); /* E74C3C */
-    --primary-foreground: oklch(1 0 0); /* white */
+    /* --primary: oklch(0.577 0.245 27.325); /* E74C3C */
+
+    --primary: oklch(0.402 0.215 294.09);
+    --primary-foreground: oklch(1 0 0);
     --primary-hover: oklch(0.58 0.1854 28.1);
 
     /* Secondary: light background with dark text */
-    --secondary: oklch(0.97 0 0); /* ECF0F1 */
+    --secondary: oklch(0.535 0.2253 335.66);
     --secondary-foreground: oklch(0.145 0 0);
 
     /* Muted: similar to secondary */
@@ -70,9 +72,9 @@
     --success-foreground: oklch(1 0 0);
 
     /* Other UI elements */
-    --border: oklch(0.9 0.02 0);
-    --input: oklch(0.82 0 0);
-    --ring: oklch(0.577 0.245 27.325 / 0.8);
+    --border: oklch(0.952 0.0045 214.33);
+    --input: oklch(0.952 0.0045 214.33);
+    --ring: oklch(0.402 0.215 294.09);
 
     --chart-1: oklch(0.577 0.245 27.325);
     --chart-2: oklch(0.646 0.222 141.116);

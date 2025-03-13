@@ -27,6 +27,7 @@
     "@tanstack/react-query": "^5.67.2",
     "ai": "^4.1.53",
     "babel-plugin-react-compiler": "^19.0.0-beta-40c6c23-20250301",
+    "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -43,9 +43,9 @@ export default function CreditsDisplay({ onBuyCredits }: CreditsDisplayProps) {
         variant="ghost"
         size="sm"
         onClick={onBuyCredits}
-        className="text-primary hover:text-primary-hover hover:bg-red-50"
+        className="text-primary hover:text-primary hover:bg-primary/20"
       >
-        Add Credits
+        Add credits
       </Button>
     </div>
   );

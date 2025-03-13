@@ -16,7 +16,6 @@ import {
 interface UserAvatarMenuProps {
   user?: Partial<SupabaseUser> | null;
   onLogout: () => void;
-  onAddMoreCredits: () => void;
   onAuth: () => void;
 }
 

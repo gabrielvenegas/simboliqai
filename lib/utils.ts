@@ -11,3 +11,13 @@ export function numberToMoney(value: number): string {
     currency: "USD",
   }).format(value);
 }
+
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+}

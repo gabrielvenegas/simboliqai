@@ -24,9 +24,11 @@ import { createClient } from "@/lib/supabase/client";
 import { numberToMoney } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
 
+type UserWithCredits = User;
+
 interface BuyCreditsModalProps {
   onClose: () => void;
-  user?: User | null;
+  user?: Partial<UserWithCredits> | null;
 }
 
 const $stripe = loadStripe(
@@ -69,7 +71,7 @@ export default function BuyCreditsModal({
       user,
       selectedPlan,
     }: {
-      user: User;
+      user: Partial<UserWithCredits>;
       selectedPlan: any;
     }) => {
       const response = await fetch("/api/checkout", {
@@ -182,7 +184,7 @@ export default function BuyCreditsModal({
                                   id={pkg.id}
                                   className={`w-full ${
                                     field?.value === pkg.slug
-                                      ? "border-primary bg-red-50"
+                                      ? "border-primary bg-primary/10"
                                       : "border-gray-100 hover:border-primary hover:shadow-sm"
                                   }`}
                                 >
@@ -209,7 +211,7 @@ export default function BuyCreditsModal({
                     <Button
                       type="submit"
                       disabled={!selectedPlan || isPending}
-                      className="w-full mt-4 bg-primary hover:bg-primary-hover text-white"
+                      className="w-full mt-4 bg-gradient-to-r from-primary to-secondary hover:brightness-90 text-white"
                     >
                       {isPending ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -28,12 +28,11 @@ import {
 } from "./ui/form";
 import { signIn, signUp } from "@/app/actions";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 
 interface AuthModalProps {
   onClose: () => void;
-  refetchUser: () => void;
 }
 
 const signInSchema = z.object({
@@ -49,7 +48,9 @@ const signUpSchema = z.object({
     .max(100),
 });
 
-export default function AuthModal({ onClose, refetchUser }: AuthModalProps) {
+export default function AuthModal({ onClose }: AuthModalProps) {
+  const queryClient = useQueryClient();
+
   const signInForm = useForm<z.infer<typeof signInSchema>>({
     defaultValues: {
       email: "",
@@ -88,10 +89,21 @@ export default function AuthModal({ onClose, refetchUser }: AuthModalProps) {
     mutationFn: async (payload: z.infer<typeof signInSchema>) => {
       return signIn(payload.email, payload.password);
     },
-    onSuccess() {
+    async onSuccess() {
       toast.success("Logged in successfully.");
 
-      refetchUser();
+      await queryClient.invalidateQueries({
+        queryKey: ["fetch-user"],
+        refetchType: "active",
+        exact: true,
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["user-credits"],
+        refetchType: "active",
+        exact: true,
+      });
+
       onClose();
     },
     onError() {
