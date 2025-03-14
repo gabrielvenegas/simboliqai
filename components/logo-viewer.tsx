@@ -53,10 +53,6 @@ export default function LogoViewer({ svg: icon }: LogoViewerProps) {
     const innerBox = innerContainer.getBBox();
     const textBox = textElem.getBBox();
 
-    console.log("iconBox: ", iconBox);
-    console.log("innerBox: ", innerBox);
-    console.log("textBox: ", textBox);
-
     const desiredIconHeight = 70;
     const scaleFactor = desiredIconHeight / innerBox.height;
 
@@ -74,10 +70,11 @@ export default function LogoViewer({ svg: icon }: LogoViewerProps) {
     const fontSize = desiredIconHeight - 28 - textBox.width * scaleFactor;
 
     const xpto = iconHeightScaled * 0.6935483871;
+    const iconCenterY = iconBox.y * scaleFactor + iconHeightScaled / 2;
     textElem.setAttribute("x", String(textX));
-    textElem.setAttribute("y", String(xpto + xpto * scaleFactor));
+    textElem.setAttribute("y", String(iconCenterY));
     textElem.style.fontSize = `${fontSize}px`;
-    textElem.style.alignmentBaseline = "central";
+    textElem.style.dominantBaseline = "central";
 
     const outerWidth = 382;
     const { x, width } = innerContainer.getBBox();
