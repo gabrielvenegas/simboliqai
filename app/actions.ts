@@ -14,7 +14,7 @@ const fontsMap = {
   professional: [
     {
       name: "",
-      path: "",
+      path: "asdasd",
     },
   ],
   energetic: [
