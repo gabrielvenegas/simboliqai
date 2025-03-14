@@ -5,7 +5,7 @@ import { createReplicate } from "@ai-sdk/replicate";
 import { experimental_generateImage as generateImage } from "ai";
 import path from "path";
 import fs from "fs";
-import { calm, elegant, playful } from "@/lib/fonts";
+import { calm, elegant, playful } from "@/public/fonts";
 
 const fontsMap = {
   calm,
