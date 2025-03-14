@@ -20,7 +20,7 @@ import { useDisclosure } from "@/hooks/use-disclosure";
 import { createClient } from "@/lib/supabase/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserAvatarMenu from "@/components/user-avatar-menu";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,6 +42,7 @@ import { generateLogo } from "./actions";
 import { Textarea } from "@/components/ui/textarea";
 import confetti from "canvas-confetti";
 import LogoViewer from "@/components/logo-viewer";
+import SuccessPurchase from "@/components/success-purchase";
 
 const schema = z.object({
   brandName: z.string(),
@@ -50,9 +51,6 @@ const schema = z.object({
 });
 
 export default function Home() {
-  const searchParams = useSearchParams();
-  const successPurchase = searchParams.get("success-purchase") === "true";
-
   const queryClient = useQueryClient();
 
   const supabase = createClient();
@@ -166,24 +164,6 @@ export default function Home() {
 
     mutate(requestPayload);
   }
-
-  useEffect(() => {
-    if (successPurchase) {
-      const timerId = setTimeout(() => {
-        toast.success("Thank you for your purchase!", {
-          className: "bg-green-500 text-white p-4 rounded-md",
-        });
-      });
-
-      const url = new URL(window.location.href);
-      url.searchParams.delete("success-purchase");
-      window.history.replaceState({}, "", url.toString());
-
-      return () => {
-        clearTimeout(timerId);
-      };
-    }
-  }, [successPurchase]);
 
   return (
     <main className="min-h-screen bg-white flex flex-col items-center justify-center p-4 md:p-8">
@@ -435,6 +415,10 @@ export default function Home() {
           <BuyCreditsModal onClose={toggleBuyCreditsModal} user={user} />
         )}
       </FormProvider>
+
+      <Suspense>
+        <SuccessPurchase />
+      </Suspense>
     </main>
   );
 }
