@@ -347,60 +347,60 @@ export default function Home() {
                   <CardContent className="flex-1 flex flex-col">
                     <div className="flex-1 flex items-center justify-center bg-[#ECF0F1] rounded-md p-4 mb-4">
                       <div className="w-full h-full flex flex-col items-center justify-center">
-                        {generatedLogo && (
-                          <LogoViewer svg={generatedLogo.svgUrl} />
+                        {generatedLogo?.svg && (
+                          <LogoViewer svg={generatedLogo?.svg} />
                         )}
-                      </div>
 
-                      {/* <AnimatePresence mode="wait">
-                        {isPending ? (
-                          <motion.div
-                            key="loading"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center"
-                          >
-                            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                            <p className="mt-2 text-[#666666]">
-                              Creating your logo...
-                            </p>
-                          </motion.div>
-                        ) : generatedLogo?.svg ? (
-                          <motion.div
-                            key="svg"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="w-full h-full flex flex-col items-center justify-center"
-                          >
-                            <img
-                              src={generatedLogo.svgUrl}
-                              alt={`${brandName} Logo`}
-                              style={{ objectFit: "contain" }}
-                            />
-                            <a
-                              href={generatedLogo.svgUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mt-2 text-sm text-[#666666] hover:text-primary flex items-center"
+                        {/* <AnimatePresence mode="wait">
+                          {isPending ? (
+                            <motion.div
+                              key="loading"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="flex flex-col items-center justify-center"
                             >
-                              View full SVG{" "}
-                              <ExternalLink className="ml-1 h-3 w-3" />
-                            </a>
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="placeholder"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="text-center text-[#666666]"
-                          >
-                            <p>Your logo will appear here</p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence> */}
+                              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                              <p className="mt-2 text-[#666666]">
+                                Creating your logo...
+                              </p>
+                            </motion.div>
+                          ) : generatedLogo?.svgUrl ? (
+                            <motion.div
+                              key="svg"
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="w-full h-full flex flex-col items-center justify-center"
+                            >
+                              <img
+                                src={generatedLogo.svgUrl}
+                                alt={`${brandName} Logo`}
+                                style={{ objectFit: "contain" }}
+                              />
+                              <a
+                                href={generatedLogo.svgUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-2 text-sm text-[#666666] hover:text-primary flex items-center"
+                              >
+                                View full SVG{" "}
+                                <ExternalLink className="ml-1 h-3 w-3" />
+                              </a>
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="placeholder"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="text-center text-[#666666]"
+                            >
+                              <p>Your logo will appear here</p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence> */}
+                      </div>
                     </div>
 
                     {/* {generatedLogo?.svgUrl && (

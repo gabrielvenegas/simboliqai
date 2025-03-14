@@ -32,7 +32,7 @@ const extraPrompts: Record<FontStyle, string> = {
   elegant: "The elegant style has thinner strokes and a more minimal design.",
   professional:
     "The professional style has medium strokes and a more formal design.",
-  calm: "The calm style has thin strokes and a more minimal design.",
+  calm: "The calm style has slightly thinner strokes and a more minimal design.",
   energetic: "The energetic style has bold strokes and a more dynamic design.",
 };
 
@@ -116,11 +116,9 @@ export async function generateLogo(payload: {
 
     const { brandName, iconDescription, fontStyle } = payload;
 
-    let prompt = `Generate a ${iconDescription} icon with black strokes and a ${fontStyle} style. `;
-
     const font = getFont(fontStyle as FontStyle);
 
-    prompt = prompt.concat(
+    const prompt = iconDescription.concat(
       extraPrompts[fontStyle as keyof typeof extraPrompts],
     );
 
@@ -171,9 +169,9 @@ export async function generateLogo(payload: {
     //   </svg>`;
     //
     // get font size based on brand name length
-    const fontSize = 76 - 2.75 * brandName.length;
-    const symbolScale = 0.04 - 0.0003 * brandName.length;
-    const translateOffset = 6 + 0.25 * brandName.length;
+    // const fontSize = 76 - 2.75 * brandName.length;
+    // const symbolScale = 0.04; //- 0.0004 * brandName.length;
+    // const translateOffset = 6 + 0.25 * brandName.length;
 
     // const combinedSvg = `
     //   <svg xmlns="http://www.w3.org/2000/svg"
@@ -199,10 +197,11 @@ export async function generateLogo(payload: {
     //       ${brandName}
     //     </text>
     //   </svg>`;
-    //
+
     const combinedSvg = {
+      font: `<defs><style type="text/css">@font-face { font-family: '${font.name}'; src: url("data:font/ttf;base64,${font.base64}") format("truetype"); }</style></defs>`,
       icon: `<g id="icon">${iconPathsOnly}</g>`,
-      text: `<text style="font-family: '${font.name}', sans-serif; font-size: ${fontSize}px; fill: black;"> ${brandName}</text>`,
+      text: `<text style="font-family: '${font.name}', sans-serif; fill: black;">${brandName}</text>`,
     };
 
     // const modifiedBase64 = Buffer.from(combinedSvg).toString("base64");
@@ -225,7 +224,7 @@ export async function generateLogo(payload: {
         `);
     }
 
-    return { success: true, svgUrl: combinedSvg };
+    return { success: true, svg: combinedSvg };
   } catch (err) {
     console.error(err);
     throw new Error("Failed to generate logo");
