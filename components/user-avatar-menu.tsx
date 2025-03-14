@@ -50,7 +50,7 @@ export default function UserAvatarMenu({
           size="sm"
           className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-white"
         >
-          <Avatar className="h-8 w-8 border border-gray-200">
+          <Avatar className="h-10 w-10 border border-gray-200">
             <AvatarFallback className="bg-gradient-to-r from-primary to-secondary text-white text-xs">
               {getInitials(user?.email!)}
             </AvatarFallback>
