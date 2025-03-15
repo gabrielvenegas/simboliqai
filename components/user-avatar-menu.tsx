@@ -44,18 +44,12 @@ export default function UserAvatarMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-white"
-        >
-          <Avatar className="h-10 w-10 border border-gray-200">
-            <AvatarFallback className="bg-gradient-to-r from-primary to-secondary text-white text-xs">
-              {getInitials(user?.email!)}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
+      <DropdownMenuTrigger>
+        <Avatar className="h-12 w-12 border border-gray-200">
+          <AvatarFallback className="bg-gradient-to-r from-primary to-secondary text-white">
+            {getInitials(user?.email!)}
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-64 rounded-lg bg-white shadow-sm border-gray-200 z-50"

@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import {
+  CheckIcon,
   Download,
   ExternalLink,
   ListRestart,
@@ -20,7 +21,7 @@ import { useDisclosure } from "@/hooks/use-disclosure";
 import { createClient } from "@/lib/supabase/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserAvatarMenu from "@/components/user-avatar-menu";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,6 +44,9 @@ import { Textarea } from "@/components/ui/textarea";
 import confetti from "canvas-confetti";
 import LogoViewer from "@/components/logo-viewer";
 import SuccessPurchase from "@/components/success-purchase";
+import { cn } from "@/lib/utils";
+import MainBanner from "@/components/main-banner";
+import Image from "next/image";
 
 const schema = z.object({
   brandName: z.string(),
@@ -52,8 +56,9 @@ const schema = z.object({
 
 export default function Home() {
   const queryClient = useQueryClient();
-
   const supabase = createClient();
+
+  const [downloaded, setDownloaded] = useState(false);
 
   const form = useForm<z.infer<typeof schema>>({
     mode: "onSubmit",
@@ -65,7 +70,7 @@ export default function Home() {
     resolver: zodResolver(schema),
   });
 
-  const brandName = form.watch("brandName");
+  const svgContainer = useRef<HTMLDivElement>(null);
 
   const { onToggle: toggleApiKeyModal, isOpen: apiKeyModalIsOpen } =
     useDisclosure();
@@ -144,15 +149,30 @@ export default function Home() {
   }
 
   function downloadLogo() {
-    // const url = generatedLogo?.svgUrl;
-    // if (!url) {
-    //   toast.error("No logo generated yet.");
-    //   return;
-    // }
-    // const link = document.createElement("a");
-    // link.href = url;
-    // link.download = `logo-${brandName}.svg`;
-    // link.click();
+    const svgElement = svgContainer.current?.querySelector("svg");
+    if (!svgElement) {
+      console.error("SVG element not found.");
+      return;
+    }
+
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svgElement);
+    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "logo.svg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setDownloaded(true);
+
+    setTimeout(() => {
+      setDownloaded(false);
+    }, 5000);
   }
 
   function onSubmit(payload: z.infer<typeof schema>) {
@@ -176,33 +196,40 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-4xl"
+            className="w-full max-w-4xl space-y-6"
           >
-            <div className="text-center mb-6 md:relative">
-              <h1 className="text-4xl font-bold text-[#333333] mb-2">
-                AI Logo Generator
-              </h1>
+            <div className="flex flex-1 gap-8 justify-end">
+              <MainBanner />
+              <UserAvatarMenu
+                user={user}
+                onAuth={toggleAuthModal}
+                onLogout={() => {
+                  supabase.auth.signOut();
+                  window.location.reload();
+                }}
+              />
+            </div>
+            <div className="text-center md:relative">
+              <Image
+                className="justify-self-center"
+                src="/logo.svg"
+                alt="AI Logo Generator"
+                width={400}
+                height={100}
+              />
               <p className="text-lg text-[#666666]">
                 Create beautiful SVG logos in seconds
               </p>
 
-              <div className="absolute right-0 top-4 items-center space-x-2 flex">
-                <UserAvatarMenu
-                  user={user}
-                  onAuth={toggleAuthModal}
-                  onLogout={() => {
-                    supabase.auth.signOut();
-                    window.location.reload();
-                  }}
-                />
-                {/* <Button variant="ghost" size="icon" onClick={toggleApiKeyModal}>
+              {/* <div className="absolute right-0 top-4 items-center space-x-2 flex"> */}
+              {/* <Button variant="ghost" size="icon" onClick={toggleApiKeyModal}>
                   <Settings className="h-5 w-5 text-[#666666]" />
                   <span className="sr-only">API Settings</span>
                 </Button> */}
-              </div>
+              {/* </div> */}
             </div>
 
-            <div className="mb-6 border-b border-gray-100">
+            <div className="border-b border-gray-100">
               <CreditsDisplay onBuyCredits={onBuyCredits} />
             </div>
 
@@ -349,7 +376,10 @@ export default function Home() {
                               exit={{ opacity: 0 }}
                               className="w-full h-full flex flex-col items-center justify-center"
                             >
-                              <LogoViewer svg={generatedLogo?.svg} />
+                              <LogoViewer
+                                svgContainer={svgContainer}
+                                svg={generatedLogo?.svg}
+                              />
                             </motion.div>
                           ) : (
                             <motion.div
@@ -365,24 +395,75 @@ export default function Home() {
                         </AnimatePresence>
                       </div>
                     </div>
-
-                    {/* {generatedLogo?.svgUrl && (
+                    {generatedLogo?.svg && (
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="flex gap-2"
+                        className="flex"
                       >
                         <Button
                           onClick={downloadLogo}
                           variant="ghost"
-                          className="flex-1 text-primary"
+                          className={cn(
+                            "flex-1",
+                            downloaded
+                              ? "text-success hover:text-success"
+                              : "text-primary hover:text-primary",
+                          )}
                         >
-                          <Download className="mr-2 h-4 w-4" />
-                          Download SVG
+                          <AnimatePresence mode="wait">
+                            {downloaded ? (
+                              <motion.span
+                                key="downloaded-icon"
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 10 }}
+                                transition={{ duration: 0.2 }}
+                                className="h-4 w-4"
+                              >
+                                <CheckIcon />
+                              </motion.span>
+                            ) : (
+                              <motion.span
+                                key="download-icon"
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 10 }}
+                                transition={{ duration: 0.2 }}
+                                className="h-4 w-4"
+                              >
+                                <Download />
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+
+                          <AnimatePresence mode="wait">
+                            {downloaded ? (
+                              <motion.span
+                                key="downloaded-text"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                Successfully downloaded
+                              </motion.span>
+                            ) : (
+                              <motion.span
+                                key="download-text"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                Download
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
                         </Button>
                       </motion.div>
-                    )} */}
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>

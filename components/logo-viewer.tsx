@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { RefObject, useEffect, useRef } from "react";
 
 type LogoViewerProps = {
   svg: {
@@ -6,6 +6,7 @@ type LogoViewerProps = {
     text: string;
     font: string;
   };
+  svgContainer: RefObject<HTMLDivElement | null>;
 };
 
 // const svgList = {
@@ -13,9 +14,10 @@ type LogoViewerProps = {
 //     text: '<text style="font-family: "Archivo", sans-serif; fill: black;">subtracker</text>',
 //   };
 
-export default function LogoViewer({ svg: icon }: LogoViewerProps) {
-  const svgContainer = useRef<HTMLDivElement>(null);
-
+export default function LogoViewer({
+  svg: icon,
+  svgContainer,
+}: LogoViewerProps) {
   useEffect(() => {
     const container = svgContainer.current;
     if (!container) return;
@@ -69,7 +71,6 @@ export default function LogoViewer({ svg: icon }: LogoViewerProps) {
     // calculate text font size
     const fontSize = desiredIconHeight - 28 - textBox.width * scaleFactor;
 
-    const xpto = iconHeightScaled * 0.6935483871;
     const iconCenterY = iconBox.y * scaleFactor + iconHeightScaled / 2;
     textElem.setAttribute("x", String(textX));
     textElem.setAttribute("y", String(iconCenterY));

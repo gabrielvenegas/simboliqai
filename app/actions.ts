@@ -14,13 +14,13 @@ const fontsMap = {
   professional: [
     {
       name: "",
-      path: "asdasd",
+      url: "asdasd",
     },
   ],
   energetic: [
     {
       name: "",
-      path: "",
+      url: "",
     },
   ],
 };
@@ -66,7 +66,7 @@ export async function signIn(email: string, password: string) {
   return { success: true };
 }
 
-function getFont(fontStyle: FontStyle) {
+async function getFont(fontStyle: FontStyle) {
   let fonts = fontsMap[fontStyle];
 
   if (!fonts || fonts.length === 0) {
@@ -74,12 +74,16 @@ function getFont(fontStyle: FontStyle) {
   }
 
   const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
-  const filePath = path.join(process.cwd(), randomFont.path);
-  const fontBuffer = fs.readFileSync(filePath);
+  // const filePath = path.join(process.cwd(), randomFont.path);
+  // const fontBuffer = fs.readFileSync(filePath);
+  //
+  const res = await fetch(`${process.env.APP_URL}/${randomFont.url}`);
+  const arrayBuffer = await res.arrayBuffer();
+  const base64 = Buffer.from(arrayBuffer).toString("base64");
 
   return {
     name: randomFont.name,
-    base64: fontBuffer.toString("base64"),
+    base64,
   };
 }
 
@@ -116,7 +120,7 @@ export async function generateLogo(payload: {
 
     const { brandName, iconDescription, fontStyle } = payload;
 
-    const font = getFont(fontStyle as FontStyle);
+    const font = await getFont(fontStyle as FontStyle);
 
     const prompt = iconDescription.concat(
       extraPrompts[fontStyle as keyof typeof extraPrompts],
