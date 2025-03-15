@@ -24,6 +24,7 @@ export async function POST(req: Request) {
         },
       ],
       mode: "payment",
+      adaptive_pricing: true,
       success_url: `${process.env.APP_URL}/?success-purchase=true`,
       cancel_url: `${process.env.APP_URL}/`,
       metadata,
