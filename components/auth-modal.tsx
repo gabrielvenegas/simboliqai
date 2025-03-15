@@ -201,7 +201,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
 
                     <Button
                       type="submit"
-                      className="w-full bg-primary hover:bg-primary-hover text-white"
+                      className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-lg hover:shadow-primary/20"
                       disabled={isSigningIn}
                     >
                       {isSigningIn && (
@@ -268,7 +268,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
 
                     <Button
                       type="submit"
-                      className="w-full bg-primary hover:bg-primary-hover text-white"
+                      className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-lg hover:shadow-primary/20"
                       disabled={isSigningUp}
                     >
                       {isSigningUp && (

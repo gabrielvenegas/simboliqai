@@ -37,7 +37,12 @@ export default function UserAvatarMenu({
 
   if (!user)
     return (
-      <Button onClick={onAuth} variant="default" size="sm">
+      <Button
+        onClick={onAuth}
+        variant="default"
+        size="sm"
+        className="w-full sm:w-auto bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-lg hover:shadow-primary/20"
+      >
         Sign In / Register
       </Button>
     );

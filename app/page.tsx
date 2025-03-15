@@ -175,6 +175,11 @@ export default function Home() {
     }, 5000);
   }
 
+  async function onSignOut() {
+    await supabase.auth.signOut();
+    window.location.reload();
+  }
+
   function onSubmit(payload: z.infer<typeof schema>) {
     const requestPayload = {
       iconDescription: payload.iconDescription,
@@ -198,15 +203,17 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="w-full max-w-4xl space-y-6"
           >
-            <div className="flex flex-1 gap-8 justify-end">
+            <div
+              className={cn(
+                "flex gap-2 sm:gap-8 items-center", // Default spacing
+                user ? "flex-row justify-end" : "flex-col sm:flex-row",
+              )}
+            >
               <MainBanner />
               <UserAvatarMenu
                 user={user}
                 onAuth={toggleAuthModal}
-                onLogout={() => {
-                  supabase.auth.signOut();
-                  window.location.reload();
-                }}
+                onLogout={onSignOut}
               />
             </div>
             <div className="text-center md:relative">

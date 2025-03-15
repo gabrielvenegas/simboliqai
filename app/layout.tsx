@@ -8,8 +8,8 @@ import QueryClientProvider from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI SVG Logo Generator",
-  description: "Create beautiful SVG logos in seconds using AI",
+  title: "SimboliqAI",
+  description: "Create beautiful SVG logos in seconds",
 };
 
 export default function RootLayout({
@@ -19,6 +19,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="96x96"
+          href="/favicon-96x96.png"
+        />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="manifest" href="/site.webmanifest" />
+      </head>
       <body className={`${inter.className}`}>
         <QueryClientProvider>{children}</QueryClientProvider>
         <Toaster theme="light" richColors />
