@@ -47,6 +47,7 @@ import SuccessPurchase from "@/components/success-purchase";
 import { cn } from "@/lib/utils";
 import MainBanner from "@/components/main-banner";
 import Image from "next/image";
+import SaveLogoButton from "@/components/save-logo-button";
 
 const schema = z.object({
   brandName: z.string(),
@@ -127,7 +128,7 @@ export default function Home() {
           exact: true,
         });
 
-        confetti();
+        await confetti();
       }
     },
     onError: () => {
@@ -188,6 +189,10 @@ export default function Home() {
     };
 
     mutate(requestPayload);
+  }
+
+  async function handleSave() {
+    if (!generatedLogo?.svg) return;
   }
 
   return (
@@ -470,6 +475,10 @@ export default function Home() {
                           </AnimatePresence>
                         </Button>
                       </motion.div>
+                    )}
+
+                    {generatedLogo?.svg && (
+                      <SaveLogoButton onSave={handleSave} />
                     )}
                   </CardContent>
                 </Card>

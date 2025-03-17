@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 interface UserAvatarMenuProps {
   user?: Partial<SupabaseUser> | null;
@@ -68,9 +69,14 @@ export default function UserAvatarMenu({
           </div>
         </div>
 
-        <DropdownMenuItem className="flex items-center px-4 py-2 text-sm hover:bg-gray-50">
-          <Image className="mr-3 h-4 w-4 text-gray-500" />
-          Your Logos
+        <DropdownMenuItem
+          className="flex items-center px-4 py-2 text-sm hover:bg-gray-50"
+          asChild
+        >
+          <Link href="/gallery">
+            <Image className="mr-3 h-4 w-4 text-gray-500" />
+            Your Logos
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="flex items-center px-4 py-2 text-sm hover:bg-gray-50">
           <CreditCard className="mr-3 h-4 w-4 text-gray-500" />

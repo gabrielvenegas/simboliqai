@@ -74,9 +74,6 @@ async function getFont(fontStyle: FontStyle) {
   }
 
   const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
-  // const filePath = path.join(process.cwd(), randomFont.path);
-  // const fontBuffer = fs.readFileSync(filePath);
-  //
   const res = await fetch(`${process.env.APP_URL}/${randomFont.url}`);
   const arrayBuffer = await res.arrayBuffer();
   const base64 = Buffer.from(arrayBuffer).toString("base64");
@@ -140,76 +137,17 @@ export async function generateLogo(payload: {
     });
 
     const iconSvgMarkup = Buffer.from(image.uint8Array).toString("utf8");
-    // const iconSvgMarkup = "";
     const iconPathsOnly = iconSvgMarkup
       .replace(/<\?xml.*?>/g, "")
       .replace(/<!DOCTYPE.*?>/g, "")
       .replace(/<svg[^>]*>/, "")
       .replace(/<\/svg>/, "");
 
-    // const combinedSvg = `
-    //   <svg xmlns="http://www.w3.org/2000/svg"
-    //        width="500"
-    //        height="200"
-    //        viewBox="0 0 500 200"
-    //        preserveAspectRatio="xMidYMid meet">
-    //     <defs>
-    //       <style type="text/css">
-    //         @font-face {
-    //           font-family: '${font.name}';
-    //           src: url("data:font/ttf;base64,${font.base64}") format("truetype");
-    //         }
-    //       </style>
-    //     </defs>
-    //     <g transform="translate(70,50) scale(0.05)">
-    //       ${iconPathsOnly}
-    //     </g>
-    //     <text x="175" y="108"
-    //           dominant-baseline="middle"
-    //           text-anchor="start"
-    //           style="font-family: '${font.name}', sans-serif; font-size: 54px; fill: black;">
-    //       ${brandName}
-    //     </text>
-    //   </svg>`;
-    //
-    // get font size based on brand name length
-    // const fontSize = 76 - 2.75 * brandName.length;
-    // const symbolScale = 0.04; //- 0.0004 * brandName.length;
-    // const translateOffset = 6 + 0.25 * brandName.length;
-
-    // const combinedSvg = `
-    //   <svg xmlns="http://www.w3.org/2000/svg"
-    //        width="500"
-    //        height="100"
-    //        viewBox="0 0 500 100"
-    //        preserveAspectRatio="xMidYMid meet">
-    //     <defs>
-    //       <style type="text/css">
-    //         @font-face {
-    //           font-family: '${font.name}';
-    //           src: url("data:font/ttf;base64,${font.base64}") format("truetype");
-    //         }
-    //       </style>
-    //     </defs>
-    //     <g transform="translate(${translateOffset}, ${translateOffset}) scale(${symbolScale})">
-    //       ${iconPathsOnly}
-    //     </g>
-    //     <text x="90" y="48"
-    //           dominant-baseline="middle"
-    //           text-anchor="start"
-    //           style="font-family: '${font.name}', sans-serif; font-size: ${fontSize}px; fill: black;">
-    //       ${brandName}
-    //     </text>
-    //   </svg>`;
-
     const combinedSvg = {
       font: `<defs><style type="text/css">@font-face { font-family: '${font.name}'; src: url("data:font/ttf;base64,${font.base64}") format("truetype"); }</style></defs>`,
       icon: `<g id="icon">${iconPathsOnly}</g>`,
       text: `<text style="font-family: '${font.name}', sans-serif; fill: black;">${brandName}</text>`,
     };
-
-    // const modifiedBase64 = Buffer.from(combinedSvg).toString("base64");
-    // const svgUrl = `data:image/svg+xml;base64,${modifiedBase64}`;
 
     const { error } = await supabase.from("credit_transactions").insert([
       {
