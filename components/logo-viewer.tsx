@@ -1,7 +1,7 @@
 import { RefObject, useEffect } from "react";
 
 type LogoViewerProps = {
-  svg: {
+  svg?: {
     icon: string;
     text: string;
     font: string;
