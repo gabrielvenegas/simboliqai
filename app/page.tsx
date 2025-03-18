@@ -1,14 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, Variants } from "framer-motion";
-import {
-  CheckIcon,
-  Download,
-  ExternalLink,
-  ListRestart,
-  Loader2,
-  Settings,
-} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CheckIcon, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AuthModal from "@/components/auth-modal";
 import ApiKeyModal from "@/components/api-key-modal";
@@ -21,8 +14,7 @@ import { useDisclosure } from "@/hooks/use-disclosure";
 import { createClient } from "@/lib/supabase/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserAvatarMenu from "@/components/user-avatar-menu";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -39,7 +31,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { generateLogo } from "./actions";
+import { generateLogo, saveLogo } from "./actions";
 import { Textarea } from "@/components/ui/textarea";
 import confetti from "canvas-confetti";
 import LogoViewer from "@/components/logo-viewer";
@@ -60,6 +52,7 @@ export default function Home() {
   const supabase = createClient();
 
   const [downloaded, setDownloaded] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const form = useForm<z.infer<typeof schema>>({
     mode: "onSubmit",
@@ -128,12 +121,55 @@ export default function Home() {
           exact: true,
         });
 
-        await confetti();
+        confetti()?.then(() => console.log("Generated logo"));
       }
     },
     onError: () => {
       toast.error(
         "Logo generation failed. Don't worry — no credits were deducted.",
+      );
+    },
+  });
+
+  const { mutate: saveLogoMutation, isPending: isSavingLogo } = useMutation({
+    mutationKey: ["save-logo"],
+    mutationFn: async (payload: {
+      iconDescription: string;
+      brandName: string;
+      fontStyle: string;
+    }) => {
+      const svgElement = svgContainer.current?.querySelector("svg");
+      if (!svgElement) {
+        console.error("No SVG element found");
+        return;
+      }
+
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svgElement);
+
+      const blob = new Blob([svgString], {
+        type: "image/svg+xml;charset=utf-8",
+      });
+
+      const file = new File([blob], "logo.svg", { type: "image/svg+xml" });
+
+      return saveLogo(
+        {
+          iconDescription: payload.iconDescription,
+          brandName: payload.brandName,
+          fontStyle: payload.fontStyle,
+          fontFamily: generatedLogo?.fontFamily,
+        },
+        file,
+      );
+    },
+    onSuccess: async () => {
+      toast.success("Logo saved successfully!");
+      setSaved(true);
+    },
+    onError: () => {
+      toast.error(
+        "Logo saving failed. Don't worry — no credits were deducted.",
       );
     },
   });
@@ -182,6 +218,8 @@ export default function Home() {
   }
 
   function onSubmit(payload: z.infer<typeof schema>) {
+    setSaved(false);
+
     const requestPayload = {
       iconDescription: payload.iconDescription,
       brandName: payload.brandName,
@@ -193,6 +231,9 @@ export default function Home() {
 
   async function handleSave() {
     if (!generatedLogo?.svg) return;
+
+    const payload = form.getValues();
+    saveLogoMutation(payload);
   }
 
   return (
@@ -210,7 +251,7 @@ export default function Home() {
           >
             <div
               className={cn(
-                "flex gap-2 sm:gap-8 items-center", // Default spacing
+                "flex gap-2 sm:gap-8 items-center",
                 user ? "flex-row justify-end" : "flex-col sm:flex-row",
               )}
             >
@@ -366,7 +407,7 @@ export default function Home() {
                   <CardContent className="flex-1 flex flex-col">
                     <div className="flex-1 flex items-center justify-center bg-[#ECF0F1] rounded-md p-4 mb-4">
                       <div className="w-full h-full flex flex-col items-center justify-center">
-                        {/* <AnimatePresence mode="wait">
+                        <AnimatePresence mode="wait">
                           {isPending ? (
                             <motion.div
                               key="loading"
@@ -404,11 +445,7 @@ export default function Home() {
                               <p>Your logo will appear here</p>
                             </motion.div>
                           )}
-                        </AnimatePresence> */}
-                        <LogoViewer
-                          svgContainer={svgContainer}
-                          svg={undefined}
-                        />
+                        </AnimatePresence>
                       </div>
                     </div>
                     {generatedLogo?.svg && (
@@ -416,13 +453,12 @@ export default function Home() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="flex"
+                        className="flex items-center justify-center"
                       >
                         <Button
                           onClick={downloadLogo}
                           variant="ghost"
                           className={cn(
-                            "flex-1",
                             downloaded
                               ? "text-success hover:text-success"
                               : "text-primary hover:text-primary",
@@ -430,60 +466,42 @@ export default function Home() {
                         >
                           <AnimatePresence mode="wait">
                             {downloaded ? (
-                              <motion.span
-                                key="downloaded-icon"
+                              <motion.div
+                                key="downloaded"
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: 10 }}
                                 transition={{ duration: 0.2 }}
-                                className="h-4 w-4"
+                                className="flex items-center"
                               >
-                                <CheckIcon />
-                              </motion.span>
+                                <CheckIcon className="h-4 w-4" />
+                                <span className="ml-2">Download</span>
+                              </motion.div>
                             ) : (
-                              <motion.span
-                                key="download-icon"
+                              <motion.div
+                                key="download"
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: 10 }}
                                 transition={{ duration: 0.2 }}
-                                className="h-4 w-4"
+                                className="flex items-center"
                               >
-                                <Download />
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
-
-                          <AnimatePresence mode="wait">
-                            {downloaded ? (
-                              <motion.span
-                                key="downloaded-text"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                              >
-                                Successfully downloaded
-                              </motion.span>
-                            ) : (
-                              <motion.span
-                                key="download-text"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                              >
-                                Download
-                              </motion.span>
+                                <Download className="h-4 w-4" />
+                                <span className="ml-2">Download</span>
+                              </motion.div>
                             )}
                           </AnimatePresence>
                         </Button>
+                        <SaveLogoButton
+                          onSave={handleSave}
+                          isLoading={isSavingLogo}
+                          saved={saved}
+                        />
                       </motion.div>
                     )}
 
-                    {generatedLogo?.svg && (
-                      <SaveLogoButton onSave={handleSave} />
-                    )}
+                    {/* {generatedLogo?.svg && (
+                    )} */}
                   </CardContent>
                 </Card>
               </motion.div>

@@ -3,8 +3,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createReplicate } from "@ai-sdk/replicate";
 import { experimental_generateImage as generateImage } from "ai";
-import path from "path";
-import fs from "fs";
 import { calm, elegant, playful } from "@/lib/fonts";
 
 const fontsMap = {
@@ -166,9 +164,70 @@ export async function generateLogo(payload: {
         `);
     }
 
-    return { success: true, svg: combinedSvg };
+    return { success: true, svg: combinedSvg, fontFamily: font.name };
   } catch (err) {
     console.error(err);
     throw new Error("Failed to generate logo");
+  }
+}
+
+export async function saveLogo(
+  payload: {
+    iconDescription: string;
+    brandName: string;
+    fontStyle: string;
+    fontFamily?: string;
+  },
+  file: File,
+) {
+  const supabase = await createClient();
+
+  const { data } = await supabase.auth.getUser();
+
+  if (!data || !data.user) {
+    throw new Error("User not found");
+  }
+
+  const uuid = crypto.randomUUID();
+
+  console.log("Saving logo in storage");
+
+  const { data: logoFile, error } = await supabase.storage
+    .from("logos")
+    .upload(`${uuid}.svg`, file, {
+      upsert: true,
+      cacheControl: "3600",
+      contentType: "image/svg+xml",
+    });
+
+  if (error) {
+    console.error("Upload error:", error);
+    throw error;
+  }
+
+  console.log("Logo saved in storage");
+
+  console.log("Saving history in database");
+  try {
+    const { error } = await supabase.from("logo_history").insert([
+      {
+        brand_name: payload.brandName,
+        prompt: payload.iconDescription,
+        font_style: payload.fontStyle,
+        font_family: payload.fontFamily,
+        user_id: data.user.id,
+        url: logoFile?.fullPath,
+      },
+    ]);
+
+    if (error) {
+      console.error("Database error:", error);
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Database error:", error);
+    return { success: false };
   }
 }
