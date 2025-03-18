@@ -110,6 +110,7 @@ export default function Home() {
       iconDescription: string;
       brandName: string;
       fontStyle: string;
+      devMode?: boolean;
     }) => generateLogo(payload),
     onSuccess: async (data) => {
       if (data.success) {
@@ -224,6 +225,7 @@ export default function Home() {
       iconDescription: payload.iconDescription,
       brandName: payload.brandName,
       fontStyle: payload.fontStyle,
+      devMode: false,
     };
 
     mutate(requestPayload);

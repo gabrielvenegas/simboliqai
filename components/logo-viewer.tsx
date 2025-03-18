@@ -50,7 +50,7 @@ export default function LogoViewer({
     if (!iconGroup || !textElem) return;
 
     const iconBox = iconGroup.getBBox();
-    const desiredIconHeight = 70;
+    const desiredIconHeight = 50;
     const scaleFactor = desiredIconHeight / iconBox.height;
 
     // Shift icon to x=0, adjust y later
@@ -62,9 +62,12 @@ export default function LogoViewer({
 
     const iconWidthScaled = iconBox.width * scaleFactor;
     const iconHeightScaled = iconBox.height * scaleFactor;
-    const gap = 18;
-    const textX = iconWidthScaled + gap;
+    console.log(iconHeightScaled);
+    const gap = iconHeightScaled / 4;
+    const textX = iconWidthScaled + gap - xShift;
 
+    console.log(textX);
+    console.log(gap);
     textElem.setAttribute("x", String(textX));
     textElem.style.dominantBaseline = "initial";
     textElem.style.fontSize = `${iconHeightScaled * 0.6}px`;
