@@ -62,12 +62,9 @@ export default function LogoViewer({
 
     const iconWidthScaled = iconBox.width * scaleFactor;
     const iconHeightScaled = iconBox.height * scaleFactor;
-    console.log(iconHeightScaled);
     const gap = iconHeightScaled / 4;
     const textX = iconWidthScaled + gap - xShift;
 
-    console.log(textX);
-    console.log(gap);
     textElem.setAttribute("x", String(textX));
     textElem.style.dominantBaseline = "initial";
     textElem.style.fontSize = `${iconHeightScaled * 0.6}px`;
@@ -106,11 +103,6 @@ export default function LogoViewer({
     const adjustedInnerBox = innerContainer.getBBox();
     const finalWidth = adjustedInnerBox.width;
     const finalHeight = adjustedInnerBox.height;
-
-    console.log("innerBox (before shift):", innerBox);
-    console.log("adjustedInnerBox (after shift):", adjustedInnerBox);
-    console.log("finalWidth:", finalWidth);
-    console.log("finalHeight:", finalHeight);
 
     svg.setAttribute("width", String(finalWidth));
     svg.setAttribute("height", String(finalHeight));
