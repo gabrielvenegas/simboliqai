@@ -366,7 +366,7 @@ export default function Home() {
                   <CardContent className="flex-1 flex flex-col">
                     <div className="flex-1 flex items-center justify-center bg-[#ECF0F1] rounded-md p-4 mb-4">
                       <div className="w-full h-full flex flex-col items-center justify-center">
-                        {/* <AnimatePresence mode="wait">
+                        <AnimatePresence mode="wait">
                           {isPending ? (
                             <motion.div
                               key="loading"
@@ -404,11 +404,7 @@ export default function Home() {
                               <p>Your logo will appear here</p>
                             </motion.div>
                           )}
-                        </AnimatePresence> */}
-                        <LogoViewer
-                          svgContainer={svgContainer}
-                          svg={undefined}
-                        />
+                        </AnimatePresence>
                       </div>
                     </div>
                     {generatedLogo?.svg && (
