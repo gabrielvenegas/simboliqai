@@ -225,7 +225,7 @@ export default function Home() {
       iconDescription: payload.iconDescription,
       brandName: payload.brandName,
       fontStyle: payload.fontStyle,
-      devMode: false,
+      devMode: true,
     };
 
     mutate(requestPayload);
@@ -371,7 +371,7 @@ export default function Home() {
                       className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-lg hover:shadow-primary/20"
                       disabled={
                         !user ||
-                        credits! <= 0 ||
+                        // credits! <= 0 ||
                         isPending ||
                         !form.formState.isValid
                       }
