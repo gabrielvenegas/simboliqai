@@ -13,5 +13,5 @@ export default async function GalleryLayout({
     redirect("/");
   }
 
-  return <div className="min-h-screen w-full p-6 md:p-12">{children}</div>;
+  return <div className="min-h-screen w-full">{children}</div>;
 }
