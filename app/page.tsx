@@ -360,6 +360,9 @@ export default function Home() {
                                 Professional
                               </SelectItem>
                               <SelectItem value="playful">Playful</SelectItem>
+                              <SelectItem value="handwritten">
+                                Handwritten
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </FormItem>
