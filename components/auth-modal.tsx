@@ -33,6 +33,8 @@ import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { Provider } from "@supabase/supabase-js";
 import { create } from "domain";
+import Link from "next/link";
+import { Checkbox } from "./ui/checkbox";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -49,6 +51,9 @@ const signUpSchema = z.object({
     .string()
     .min(6, "Password needs to be at least 6 characters long")
     .max(100),
+  terms: z.boolean().refine((value) => value, {
+    message: "You must agree to the terms and conditions",
+  }),
 });
 
 export default function AuthModal({ onClose }: AuthModalProps) {
@@ -291,6 +296,35 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                               />
                             </FormControl>
                             <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <FormField
+                        name="terms"
+                        control={signUpForm.control}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-wrap items-center">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel>
+                              Accept{" "}
+                              <Link
+                                className="underline"
+                                href="/tos"
+                                target="_blank"
+                              >
+                                terms and conditions
+                              </Link>
+                            </FormLabel>
+                            <div className="w-full mt-2">
+                              <FormMessage />
+                            </div>
                           </FormItem>
                         )}
                       />

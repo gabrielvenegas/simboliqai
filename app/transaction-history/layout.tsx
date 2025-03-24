@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
-export default async function GalleryLayout({
+export default async function TransactionHistoryLayout({
   children,
 }: {
   children: React.ReactNode;

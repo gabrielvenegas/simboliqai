@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { LogOut, CreditCard, Image, MailIcon } from "lucide-react";
+import {
+  LogOut,
+  Image,
+  MailIcon,
+  HistoryIcon,
+  BadgeHelpIcon,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -75,20 +81,34 @@ export default function UserAvatarMenu({
         >
           <Link href="/gallery">
             <Image className="mr-3 h-4 w-4 text-gray-500" />
-            Your Logos
+            Gallery
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className="flex items-center px-4 py-2 text-sm hover:bg-gray-50">
-          <CreditCard className="mr-3 h-4 w-4 text-gray-500" />
-          Billing
+        <DropdownMenuItem
+          className="flex items-center px-4 py-2 text-sm hover:bg-gray-50"
+          asChild
+        >
+          <Link href="/transaction-history">
+            <HistoryIcon className="mr-3 h-4 w-4 text-gray-500" />
+            Transaction History
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="flex items-center px-4 py-2 text-sm hover:bg-gray-50"
+          asChild
+        >
+          <a href="mailto:support@simboliqai.com?subject=Support%20Request&body=Describe%20your%20issue%20here">
+            <MailIcon className="mr-3 h-4 w-4 text-gray-500" />
+            Support
+          </a>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="my-1 bg-gray-100 h-px" />
         <DropdownMenuItem
           onSelect={onLogout}
-          className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+          className="flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-600 hover:bg-red-50"
         >
-          <LogOut className="mr-3 h-4 w-4" />
+          <LogOut className="mr-3 h-4 w-4 text-red-600" />
           Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>

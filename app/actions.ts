@@ -3,26 +3,22 @@
 import { createClient } from "@/lib/supabase/server";
 import { createReplicate } from "@ai-sdk/replicate";
 import { experimental_generateImage as generateImage } from "ai";
-import { calm, elegant, playful } from "@/lib/fonts";
-import { Provider } from "@/node_modules/@supabase/auth-js/dist/module/lib/types";
-import { redirect } from "next/navigation";
+import {
+  calm,
+  elegant,
+  energetic,
+  handwritten,
+  playful,
+  professional,
+} from "@/lib/fonts";
 
 const fontsMap = {
   calm,
   playful,
   elegant,
-  professional: [
-    {
-      name: "",
-      url: "asdasd",
-    },
-  ],
-  energetic: [
-    {
-      name: "",
-      url: "",
-    },
-  ],
+  professional,
+  energetic,
+  handwritten,
 };
 
 export type FontStyle = keyof typeof fontsMap;
@@ -33,7 +29,9 @@ const extraPrompts: Record<FontStyle, string> = {
   professional:
     "The professional style has medium strokes and a more formal design.",
   calm: "The calm style has slightly thinner strokes and a more minimal design.",
-  energetic: "The energetic style has bold strokes and a more dynamic design.",
+  energetic:
+    "The energetic style has slightly bolder strokes and a more dynamic design.",
+  handwritten: "The handwritten style has a more organic and personal touch.",
 };
 
 export async function signUp(email: string, password: string) {
@@ -241,26 +239,5 @@ export async function saveLogo(
   } catch (error) {
     console.error("Database error:", error);
     return { success: false };
-  }
-}
-
-export async function signInWith(provider: Provider) {
-  console.log("button clicked");
-  const supabase = await createClient();
-  const origin = "http://localhost:3000";
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: `${origin}/auth/callback`,
-    },
-  });
-
-  if (error) {
-    console.log("OAuth error: ", error);
-  }
-
-  if (data.url) {
-    redirect(data.url);
   }
 }
