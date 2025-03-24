@@ -130,7 +130,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
   async function signInWith(provider: Provider) {
     const supabase = createClient();
     let options: any = {
-      redirectTo: "http://localhost:3000/auth/callback",
+      redirectTo: "http://simboliqai.com/auth/callback",
     };
 
     if (provider === "google") {
