@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createReplicate } from "@ai-sdk/replicate";
 import { experimental_generateImage as generateImage } from "ai";
 import { calm, elegant, playful } from "@/lib/fonts";
+import { Provider } from "@/node_modules/@supabase/auth-js/dist/module/lib/types";
+import { redirect } from "next/navigation";
 
 const fontsMap = {
   calm,
@@ -239,5 +241,26 @@ export async function saveLogo(
   } catch (error) {
     console.error("Database error:", error);
     return { success: false };
+  }
+}
+
+export async function signInWith(provider: Provider) {
+  console.log("button clicked");
+  const supabase = await createClient();
+  const origin = "http://localhost:3000";
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    console.log("OAuth error: ", error);
+  }
+
+  if (data.url) {
+    redirect(data.url);
   }
 }
