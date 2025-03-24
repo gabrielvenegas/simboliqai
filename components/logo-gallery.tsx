@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Download,
-  ZoomIn,
-  ArrowLeft,
-  ArrowRight,
-  X,
-  ImagesIcon,
-} from "lucide-react";
+import { Download, ArrowLeft, ArrowRight, X, ImagesIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 

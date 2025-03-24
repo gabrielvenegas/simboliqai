@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { LogOut, CreditCard, Image, MailIcon, HistoryIcon } from "lucide-react";
+import {
+  LogOut,
+  Image,
+  MailIcon,
+  HistoryIcon,
+  BadgeHelpIcon,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -86,6 +92,15 @@ export default function UserAvatarMenu({
             <HistoryIcon className="mr-3 h-4 w-4 text-gray-500" />
             Transaction History
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="flex items-center px-4 py-2 text-sm hover:bg-gray-50"
+          asChild
+        >
+          <a href="mailto:support@simboliqai.com?subject=Support%20Request&body=Describe%20your%20issue%20here">
+            <MailIcon className="mr-3 h-4 w-4 text-gray-500" />
+            Support
+          </a>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="my-1 bg-gray-100 h-px" />

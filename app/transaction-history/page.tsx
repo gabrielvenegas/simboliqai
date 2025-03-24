@@ -5,7 +5,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Clock, Search, Filter, Sparkles } from "lucide-react";
+import { Clock, Search, Filter } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
