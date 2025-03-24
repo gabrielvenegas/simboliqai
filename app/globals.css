@@ -65,7 +65,7 @@
 
     /* Destructive: same red tone but with white text */
     --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(1 0 0);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
 
     /* Success: green tone with white text */
     --success: oklch(0.646 0.222 141.116); /* 27AE60 */
@@ -110,7 +110,7 @@
 
     /* Destructive remains the same red tone with white text */
     --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(1 0 0);
+    --destructive-foreground: oklch(0.587 0.1854 28.1);
 
     /* Success stays */
     --success: oklch(0.646 0.222 141.116);
