@@ -14,7 +14,7 @@ import { useDisclosure } from "@/hooks/use-disclosure";
 import { createClient } from "@/lib/supabase/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserAvatarMenu from "@/components/user-avatar-menu";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -78,7 +78,7 @@ export default function Home() {
   const { data: user } = useQuery({
     queryKey: ["fetch-user"],
     queryFn: async () => {
-      const { data } = await supabase.auth.getUser();
+      const { data, error } = await supabase.auth.getUser();
 
       if (!data || !data.user) return null;
       return { ...data.user };
@@ -91,7 +91,7 @@ export default function Home() {
   const { data: credits, isLoading: isCreditLoading } = useQuery<number>({
     queryKey: ["user-credits"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("user_credits")
         .select("credits")
         .single();

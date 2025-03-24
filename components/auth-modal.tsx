@@ -30,6 +30,9 @@ import { signIn, signUp } from "@/app/actions";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { createClient } from "@/lib/supabase/client";
+import { Provider } from "@supabase/supabase-js";
+import { create } from "domain";
 import Link from "next/link";
 import { Checkbox } from "./ui/checkbox";
 
@@ -124,6 +127,33 @@ export default function AuthModal({ onClose }: AuthModalProps) {
     signUpMutation(payload);
   }
 
+  async function signInWith(provider: Provider) {
+    const supabase = createClient();
+    let options: any = {
+      redirectTo: "http://simboliqai.com/auth/callback",
+    };
+
+    if (provider === "google") {
+      options = {
+        access_type: "offline",
+        prompt: "consent",
+      };
+    }
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: provider,
+      options: options,
+    });
+
+    if (error) {
+      console.error("OAuth error:", error.message);
+      toast.error("Failed to sign in with GitHub.");
+      return;
+    }
+
+    if (data.url) {
+      window.location.href = data.url; // Redirect client-side
+    }
+  }
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -329,8 +359,12 @@ export default function AuthModal({ onClose }: AuthModalProps) {
             </div>
 
             <div className="grid grid-cols-2 gap-2 w-full">
-              <Button variant="outline">Google</Button>
-              <Button variant="outline">GitHub</Button>
+              <Button onClick={() => signInWith("google")} variant="outline">
+                Google
+              </Button>
+              <Button onClick={() => signInWith("github")} variant="outline">
+                GitHub
+              </Button>
             </div>
           </CardFooter>
         </Card>
