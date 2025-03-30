@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200.039" height="29.61" viewBox="0 0 200.039 29.61">
+  <g transform="scale(0.015)">
+    <g id="icon">
+      <!-- your icon paths -->
+      <path fill="rgb(120,189,237)" d="M 233.094 1154.94 L 316.134 1154.96 ..."/>
+      <!-- remaining icon paths -->
+    </g>
+  </g>
+  <g id="svgGroup" stroke-linecap="round" fill-rule="evenodd" font-size="9pt" stroke="#000" stroke-width="0.25mm" fill="none" style="stroke:#000;stroke-width:0.25mm;fill:none">
+    <!-- your text/vector group -->
+  </g>
+</svg>

@@ -232,10 +232,9 @@ export default function Home() {
   }
 
   async function handleSave() {
-    if (!generatedLogo?.svg) return;
-
-    const payload = form.getValues();
-    saveLogoMutation(payload);
+    // if (!generatedLogo?.svg) return;
+    // const payload = form.getValues();
+    // saveLogoMutation(payload);
   }
 
   return (
@@ -360,6 +359,9 @@ export default function Home() {
                                 Professional
                               </SelectItem>
                               <SelectItem value="playful">Playful</SelectItem>
+                              <SelectItem value="handwritten">
+                                Handwritten
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </FormItem>

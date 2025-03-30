@@ -29,7 +29,20 @@ export async function POST(req: Request) {
       }
 
       const supabase = createClient();
-
+      
+      // Idempotency check
+      const { data: existingTx } = await supabase
+        .from("credit_transactions")
+        .select("id")
+        .eq("metadata->>stripeSessionId", session.id)
+        .single();
+    
+      if (existingTx) {
+        console.log(`Duplicate webhook for session ID: ${session.id}`);
+        return NextResponse.json({ received: true }); // Safely ignore duplicates
+      }
+      
+      // Log credit transaction
       const { error } = await supabase.from("credit_transactions").insert([
         {
           user_id: userId,

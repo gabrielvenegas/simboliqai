@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Ensure you have glyphhanger and FontTools (pyftsubset) installed:
 # npm install -g glyphhanger
@@ -7,29 +8,35 @@
 # Define the character set you want to keep in your fonts
 CHARSET="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-for ttf_file in *.woff2; do
-  # Skip if no TTF files are found
-  [ -f "$ttf_file" ] || continue
-
-  # Get the base name without extension
-  base_name=$(basename "$ttf_file" .woff2)
+# Use process substitution to feed the 'find' results into a while-read loop.
+while IFS= read -r ttf_file; do
+  # Derive base name (e.g., "Commissioner" from "Commissioner.ttf")
+  base_name=$(basename "$ttf_file" .ttf)
+  dir_name=$(dirname "$ttf_file")
 
   echo "Subsetting: $ttf_file"
 
-  # Run glyphhanger to create WOFF and WOFF2 subsets
+  # Run glyphhanger to create a .woff2 subset
   glyphhanger \
+    --jsdom \
     --character-string="$CHARSET" \
     --subset="$ttf_file" \
     --formats=woff2
 
-  # Remove the original TTF file
-  rm "$ttf_file"
+  # The subset file ends up as "<basename>-subset.woff2" in the script’s current directory
+  subset_file="./${base_name}-subset.woff2"
 
-  if [ -f "${base_name}-subset.woff2" ]; then
-    mv "${base_name}-subset.woff2" "${base_name}.woff2"
+  # If the subset file was created successfully, move it to the original directory
+  if [ -f "$subset_file" ]; then
+    mv "$subset_file" "${dir_name}/${base_name}.woff2"
+  else
+    echo "ERROR: Subset file not found for $ttf_file"
   fi
 
-  echo "Done with: $base_name"
-done
+  # Remove the original TTF (comment out if you want to keep TTF files)
+  rm "$ttf_file"
 
-echo "All TTFs have been subset and renamed."
+  echo "Converted $base_name.ttf to $base_name.woff2"
+done < <(find ./public/fonts -type f -name '*.ttf')
+
+echo "All TTF files have been subset and renamed to WOFF2."
