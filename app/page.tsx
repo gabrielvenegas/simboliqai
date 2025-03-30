@@ -225,17 +225,16 @@ export default function Home() {
       iconDescription: payload.iconDescription,
       brandName: payload.brandName,
       fontStyle: payload.fontStyle,
-      devMode: false,
+      devMode: true,
     };
 
     mutate(requestPayload);
   }
 
   async function handleSave() {
-    if (!generatedLogo?.svg) return;
-
-    const payload = form.getValues();
-    saveLogoMutation(payload);
+    // if (!generatedLogo?.svg) return;
+    // const payload = form.getValues();
+    // saveLogoMutation(payload);
   }
 
   return (
