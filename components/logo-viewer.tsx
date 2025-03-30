@@ -27,18 +27,18 @@ export default function LogoViewer({
     if (!container) return;
 
     const initialSvg = `
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="400"
-        height="100"
-        preserveAspectRatio="xMinYMid meet"
-      >
-        <g id="inner-container">
-          ${icon.icon}
-          ${icon.text}
-        </g>
-      </svg>
-    `;
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="400"
+      height="100"
+      preserveAspectRatio="xMinYMid meet"
+    >
+      <g id="inner-container">
+        ${icon.icon}
+        ${icon.text}
+      </g>
+    </svg>
+  `;
     container.innerHTML = initialSvg;
 
     const svg = container.querySelector("svg");
@@ -54,7 +54,7 @@ export default function LogoViewer({
     const desiredIconHeight = 50;
     const scaleFactor = desiredIconHeight / iconBox.height;
 
-    // Shift icon to x=0, adjust y later
+    // Shift icon to x=0
     const xShift = -iconBox.x * scaleFactor;
     iconGroup.setAttribute(
       "transform",
@@ -65,26 +65,17 @@ export default function LogoViewer({
     const iconHeightScaled = iconBox.height * scaleFactor;
     const gap = iconHeightScaled / 3;
 
-    // const textX = iconWidthScaled + gap - xShift;
-
-    // textGroup.setAttribute("x", String(textX));
-    // textGroup.style.dominantBaseline = "initial";
-    // textGroup.style.fontSize = `${iconHeightScaled * 0.6}px`;
-    // Position the text group right next to the icon
-
     const textXShift = textBox.x * -1 + iconWidthScaled + gap;
-    const textYShift = iconHeightScaled - textBox.height - textBox.y;
+
+    const iconTopY = iconBox.y * scaleFactor;
+    const iconCenterY = iconTopY + iconHeightScaled / 2;
+    const textCenterY = textBox.y + textBox.height / 2;
+    const textYShift = iconCenterY - textCenterY;
 
     textGroup.setAttribute(
       "transform",
       `translate(${textXShift}, ${textYShift})`,
     );
-    // const textHeightAfterScaling = textGroup.getBBox().height;
-    // const iconCenterY =
-    //   iconBox.y * scaleFactor +
-    //   iconHeightScaled / 2 +
-    //   textHeightAfterScaling / 4;
-    // textElem.setAttribute("y", String(iconCenterY));
 
     setSvgContent(svg.outerHTML);
   }, [icon]);
