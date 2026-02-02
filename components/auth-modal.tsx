@@ -134,7 +134,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
     };
 
     if (provider === "google") {
-      options = {
+      options.queryParams = {
         access_type: "offline",
         prompt: "consent",
       };
