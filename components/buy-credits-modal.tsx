@@ -1,6 +1,5 @@
 "use client";
 
-import { X, CreditCard, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,19 +8,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { useMemo } from "react";
-import { motion } from "framer-motion";
-import { loadStripe } from "@stripe/stripe-js";
-import { toast } from "sonner";
-import { User } from "@supabase/supabase-js";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { numberToMoney } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loadStripe } from "@stripe/stripe-js";
+import { User } from "@supabase/supabase-js";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { CreditCard, Loader2, X } from "lucide-react";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Skeleton } from "./ui/skeleton";
 
 type UserWithCredits = User;
@@ -101,13 +101,13 @@ export default function BuyCreditsModal({
     const stripe = await $stripe;
 
     if (!stripe) {
-      toast.error("Stripe not initialized");
+      toast.error("Stripe não foi inicializado");
 
       return;
     }
 
     if (!user) {
-      toast.error("User not found");
+      toast.error("Usuário não encontrado");
       return;
     }
 
@@ -144,13 +144,13 @@ export default function BuyCreditsModal({
                   onClick={onClose}
                 >
                   <X className="h-4 w-4" />
-                  <span className="sr-only">Close</span>
+                  <span className="sr-only">Fechar</span>
                 </Button>
 
                 <CardHeader>
-                  <CardTitle className="text-2xl">Purchase credits</CardTitle>
+                  <CardTitle className="text-2xl">Comprar créditos</CardTitle>
                   <CardDescription>
-                    Choose a plan to purchase credits for your account.
+                    Escolha um plano para comprar créditos para sua conta.
                   </CardDescription>
                 </CardHeader>
 
@@ -192,7 +192,7 @@ export default function BuyCreditsModal({
                                     {pkg.credits}
                                   </div>
                                   <div className="text-sm text-gray-500 mt-1">
-                                    credits
+                                    créditos
                                   </div>
                                   <div className="mt-3 font-medium">
                                     {numberToMoney(pkg.price / 100)}
@@ -211,7 +211,7 @@ export default function BuyCreditsModal({
                     <Button
                       type="submit"
                       disabled={!selectedPlan || isPending}
-                      className="w-full mt-4 bg-gradient-to-r from-primary to-secondary hover:brightness-90 text-white"
+                      className="w-full mt-4"
                     >
                       {isPending ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -219,8 +219,8 @@ export default function BuyCreditsModal({
                         <CreditCard className="mr-2 h-4 w-4" />
                       )}
                       {isPending
-                        ? "Processing..."
-                        : "Pay" +
+                        ? "Processando..."
+                        : "Pagar" +
                           " " +
                           numberToMoney(selectedPlan?.price / 100)}
                     </Button>

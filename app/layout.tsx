@@ -1,15 +1,15 @@
-import type React from "react";
-import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
+import type React from "react";
+import "./globals.css";
 import QueryClientProvider from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "SimboliqAI",
-  description: "Create beautiful SVG logos in seconds",
+  description: "Crie logos em SVG em segundos",
 };
 
 export default function RootLayout({
@@ -35,7 +35,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="manifest" href="/site.webmanifest" />
       </head>
-      <body className={`${inter.className}`}>
+      <body className={`${inter.className} dark`}>
         <QueryClientProvider>{children}</QueryClientProvider>
         <Toaster theme="light" richColors />
       </body>

@@ -8,7 +8,7 @@ export default function AddMoreCredit() {
       // onClick={onBuyCredits}
       className="text-primary hover:text-primary hover:bg-primary/20"
     >
-      Add credits
+      Adicionar créditos
     </Button>
   );
 }

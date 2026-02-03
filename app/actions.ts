@@ -1,8 +1,5 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
-import { createReplicate } from "@ai-sdk/replicate";
-import { experimental_generateImage as generateImage } from "ai";
 import {
   calm,
   elegant,
@@ -11,6 +8,9 @@ import {
   playful,
   professional,
 } from "@/lib/fonts";
+import { createClient } from "@/lib/supabase/server";
+import { createReplicate } from "@ai-sdk/replicate";
+import { experimental_generateImage as generateImage } from "ai";
 
 const fontsMap = {
   calm,
@@ -94,7 +94,7 @@ export async function generateLogo(payload: {
       text: '<text style="font-family: "Archivo", sans-serif; fill: black;">subtracker</text>',
       font: "",
     };
-    return { success: true, svg: combinedSvg, fontFamily: "" };
+    return { success: true, svg: combinedSvg.icon, fontFamily: "" };
   }
 
   const supabase = await createClient();
@@ -138,24 +138,24 @@ export async function generateLogo(payload: {
       providerOptions: {
         replicate: {
           size: "1024x1024",
-          style: "icon",
+          style: "vector_illustration",
           prompt,
         },
       },
     });
 
     const iconSvgMarkup = Buffer.from(image.uint8Array).toString("utf8");
-    const iconPathsOnly = iconSvgMarkup
-      .replace(/<\?xml.*?>/g, "")
-      .replace(/<!DOCTYPE.*?>/g, "")
-      .replace(/<svg[^>]*>/, "")
-      .replace(/<\/svg>/, "");
+    // const iconPathsOnly = iconSvgMarkup
+    //   .replace(/<\?xml.*?>/g, "")
+    //   .replace(/<!DOCTYPE.*?>/g, "")
+    //   .replace(/<svg[^>]*>/, "")
+    //   .replace(/<\/svg>/, "");
 
-    const combinedSvg = {
-      font: `<defs><style type="text/css">@font-face { font-family: '${font.name}'; src: url("data:font/ttf;base64,${font.base64}") format("truetype"); }</style></defs>`,
-      icon: `<g id="icon">${iconPathsOnly}</g>`,
-      text: `<text style="font-family: '${font.name}', sans-serif; fill: black;">${brandName}</text>`,
-    };
+    // const combinedSvg = {
+    //   font: `<defs><style type="text/css">@font-face { font-family: '${font.name}'; src: url("data:font/ttf;base64,${font.base64}") format("truetype"); }</style></defs>`,
+    //   icon: `<g id="icon">${iconPathsOnly}</g>`,
+    //   text: `<text style="font-family: '${font.name}', sans-serif; fill: black;">${brandName}</text>`,
+    // };
 
     const { error } = await supabase.from("credit_transactions").insert([
       {
@@ -174,7 +174,7 @@ export async function generateLogo(payload: {
         `);
     }
 
-    return { success: true, svg: combinedSvg, fontFamily: font.name };
+    return { success: true, svg: iconSvgMarkup, fontFamily: font.name };
   } catch (err) {
     console.error(err);
     throw new Error("Failed to generate logo");

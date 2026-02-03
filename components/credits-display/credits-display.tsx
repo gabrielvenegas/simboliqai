@@ -1,9 +1,9 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { Sparkles } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 
 interface CreditsDisplayProps {
@@ -32,8 +32,8 @@ export default function CreditsDisplay({ onBuyCredits }: CreditsDisplayProps) {
         {!isLoading && (
           <>
             <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-gray-600">
-              {credits} {credits === 1 ? "credit" : "credits"} remaining
+            <span className="text-sm font-medium dark:text-foreground text-gray-600">
+              {credits} {credits === 1 ? "crédito" : "créditos"} restantes
             </span>
           </>
         )}
@@ -45,7 +45,7 @@ export default function CreditsDisplay({ onBuyCredits }: CreditsDisplayProps) {
         onClick={onBuyCredits}
         className="text-primary hover:text-primary hover:bg-primary/20"
       >
-        Add credits
+        Adicionar créditos
       </Button>
     </div>
   );

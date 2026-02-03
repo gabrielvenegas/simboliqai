@@ -1,22 +1,20 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { CheckIcon, Download, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import AuthModal from "@/components/auth-modal";
 import ApiKeyModal from "@/components/api-key-modal";
-import CreditsDisplay from "@/components/credits-display/credits-display";
+import AuthModal from "@/components/auth-modal";
 import BuyCreditsModal from "@/components/buy-credits-modal";
-import { z } from "zod";
-import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useDisclosure } from "@/hooks/use-disclosure";
-import { createClient } from "@/lib/supabase/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import UserAvatarMenu from "@/components/user-avatar-menu";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import CreditsDisplay from "@/components/credits-display/credits-display";
+import LogoViewer from "@/components/logo-viewer";
+import SaveLogoButton from "@/components/save-logo-button";
+import SuccessPurchase from "@/components/success-purchase";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -25,21 +23,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
-import { generateLogo, saveLogo } from "./actions";
 import { Textarea } from "@/components/ui/textarea";
-import confetti from "canvas-confetti";
-import LogoViewer from "@/components/logo-viewer";
-import SuccessPurchase from "@/components/success-purchase";
+import UserAvatarMenu from "@/components/user-avatar-menu";
+import { useDisclosure } from "@/hooks/use-disclosure";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
-import MainBanner from "@/components/main-banner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import confetti from "canvas-confetti";
+import { AnimatePresence, motion } from "framer-motion";
+import { CheckIcon, Download, Loader2 } from "lucide-react";
 import Image from "next/image";
-import SaveLogoButton from "@/components/save-logo-button";
+import { Suspense, useRef, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { generateLogo, saveLogo } from "./actions";
 
 const schema = z.object({
   brandName: z.string(),
@@ -114,7 +113,7 @@ export default function Home() {
     }) => generateLogo(payload),
     onSuccess: async (data) => {
       if (data.success) {
-        toast.success("Logo generated successfully!");
+        toast.success("Logo gerada com sucesso!");
 
         await queryClient.invalidateQueries({
           queryKey: ["user-credits"],
@@ -122,12 +121,12 @@ export default function Home() {
           exact: true,
         });
 
-        confetti()?.then(() => console.log("Generated logo"));
+        confetti()?.then(() => console.log("Logo gerada"));
       }
     },
     onError: () => {
       toast.error(
-        "Logo generation failed. Don't worry — no credits were deducted.",
+        "Falha ao gerar a logo. Não se preocupe — nenhum crédito foi descontado.",
       );
     },
   });
@@ -141,7 +140,7 @@ export default function Home() {
     }) => {
       const svgElement = svgContainer.current?.querySelector("svg");
       if (!svgElement) {
-        console.error("No SVG element found");
+        console.error("Nenhum elemento SVG encontrado");
         return;
       }
 
@@ -165,19 +164,19 @@ export default function Home() {
       );
     },
     onSuccess: async () => {
-      toast.success("Logo saved successfully!");
+      toast.success("Logo salva com sucesso!");
       setSaved(true);
     },
     onError: () => {
       toast.error(
-        "Logo saving failed. Don't worry — no credits were deducted.",
+        "Falha ao salvar a logo. Não se preocupe — nenhum crédito foi descontado.",
       );
     },
   });
 
   function onBuyCredits() {
     if (!user) {
-      toast.error("Please sign in or register to buy credits.");
+      toast.error("Faça login ou cadastre-se para comprar créditos.");
       toggleAuthModal();
 
       return;
@@ -189,7 +188,7 @@ export default function Home() {
   function downloadLogo() {
     const svgElement = svgContainer.current?.querySelector("svg");
     if (!svgElement) {
-      console.error("SVG element not found.");
+      console.error("Elemento SVG não encontrado.");
       return;
     }
 
@@ -239,7 +238,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white flex flex-col items-center justify-center p-4 md:p-8">
+    <main className="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
       <FormProvider {...form}>
         <form
           className="flex justify-center w-full"
@@ -249,15 +248,22 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-4xl space-y-6"
+            className="w-full max-w-4xl space-y-8"
           >
             <div
               className={cn(
-                "flex gap-2 sm:gap-8 items-center",
-                user ? "flex-row justify-end" : "flex-col sm:flex-row",
+                "flex gap-2 justify-between sm:gap-8 items-center w-full",
+                user ? "flex-row" : "flex-col sm:flex-row",
               )}
             >
-              <MainBanner />
+              <Image
+                className="justify-self-center"
+                src="/logo.svg"
+                alt="Gerador de Logos com IA"
+                width={70}
+                height={70}
+              />
+              {/*<MainBanner />*/}
               <UserAvatarMenu
                 user={user}
                 onAuth={toggleAuthModal}
@@ -265,16 +271,7 @@ export default function Home() {
               />
             </div>
             <div className="text-center md:relative">
-              <Image
-                className="justify-self-center"
-                src="/logo.svg"
-                alt="AI Logo Generator"
-                width={400}
-                height={100}
-              />
-              <p className="text-lg text-[#666666]">
-                Create beautiful SVG logos in seconds
-              </p>
+              {/*<p className="text-base">Crie logos em SVG em segundos</p>*/}
 
               {/* <div className="absolute right-0 top-4 items-center space-x-2 flex"> */}
               {/* <Button variant="ghost" size="icon" onClick={toggleApiKeyModal}>
@@ -284,7 +281,7 @@ export default function Home() {
               {/* </div> */}
             </div>
 
-            <div className="border-b border-gray-100">
+            <div className="border-b">
               <CreditsDisplay onBuyCredits={onBuyCredits} />
             </div>
 
@@ -294,21 +291,26 @@ export default function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <Card className="shadow-md border-gray-100">
+                <Card className="shadow-md">
                   <CardHeader>
-                    <CardTitle>Preferences</CardTitle>
+                    <CardTitle>Preferências</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <FormField
                       name="brandName"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel htmlFor="bandName">Brand name</FormLabel>
+                        <FormItem className="gap-3">
+                          <FormLabel
+                            htmlFor="bandName"
+                            className="text-foreground/80"
+                          >
+                            Nome da marca
+                          </FormLabel>
                           <FormControl>
                             <Input
                               id="brandName"
                               {...field}
-                              placeholder="Enter your brand name"
+                              placeholder="Nome da sua marca"
                               required
                             />
                           </FormControl>
@@ -319,15 +321,18 @@ export default function Home() {
                     <FormField
                       name="iconDescription"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel htmlFor="iconDescription">
-                            Icon description
+                        <FormItem className="gap-3">
+                          <FormLabel
+                            htmlFor="iconDescription"
+                            className="text-foreground/80"
+                          >
+                            Descrição do ícone
                           </FormLabel>
                           <FormControl>
                             <Textarea
                               id="iconDescription"
                               {...field}
-                              placeholder="minimalistic flower design..."
+                              placeholder="design minimalista de flor..."
                               required
                             />
                           </FormControl>
@@ -338,30 +343,32 @@ export default function Home() {
                     <FormField
                       name="fontStyle"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Font style</FormLabel>
+                        <FormItem className="gap-3">
+                          <FormLabel className="text-foreground/80">
+                            Estilo da fonte
+                          </FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger className="w-full border-[#ECF0F1]">
-                                <SelectValue placeholder="Select a style" />
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Selecione um estilo" />
                               </SelectTrigger>
                             </FormControl>
 
                             <SelectContent>
-                              <SelectItem value="elegant">Elegant</SelectItem>
+                              <SelectItem value="elegant">Elegante</SelectItem>
                               <SelectItem value="energetic">
-                                Energetic
+                                Energético
                               </SelectItem>
-                              <SelectItem value="calm">Calm</SelectItem>
+                              <SelectItem value="calm">Calmo</SelectItem>
                               <SelectItem value="professional">
-                                Professional
+                                Profissional
                               </SelectItem>
-                              <SelectItem value="playful">Playful</SelectItem>
+                              <SelectItem value="playful">Divertido</SelectItem>
                               <SelectItem value="handwritten">
-                                Handwritten
+                                Manuscrito
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -371,7 +378,7 @@ export default function Home() {
 
                     <Button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-lg hover:shadow-primary/20"
+                      className="w-full transition-all duration-300 hover:scale-[1.02]"
                       disabled={
                         !user ||
                         credits! <= 0 ||
@@ -382,19 +389,19 @@ export default function Home() {
                       {isPending ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating...
+                          Gerando...
                         </>
                       ) : isCreditLoading ? (
-                        "Loading Credits..."
+                        "Carregando créditos..."
                       ) : credits! > 0 ? (
-                        "Generate Logo"
+                        "Gerar Logo"
                       ) : (
-                        "Insufficient credits"
+                        "Créditos insuficientes"
                       )}
                     </Button>
 
                     <small className="text-gray-500">
-                      * Each successfully generated logo costs 1 credit
+                      * Cada logo gerada com sucesso custa 1 crédito
                     </small>
                   </CardContent>
                 </Card>
@@ -405,12 +412,12 @@ export default function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <Card className="shadow-md border-gray-100 h-full flex flex-col">
+                <Card className="shadow-md h-full flex flex-col">
                   <CardHeader>
-                    <CardTitle>Logo Preview</CardTitle>
+                    <CardTitle>Prévia da Logo</CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col">
-                    <div className="flex-1 flex items-center justify-center bg-[#ECF0F1] rounded-md p-4 mb-4">
+                    <div className="flex-1 flex items-center justify-center bg-background/40 rounded-md p-4 mb-4">
                       <div className="w-full h-full flex flex-col items-center justify-center">
                         <AnimatePresence mode="wait">
                           {isPending ? (
@@ -423,7 +430,7 @@ export default function Home() {
                             >
                               <Loader2 className="h-12 w-12 animate-spin text-primary" />
                               <p className="mt-2 text-[#666666]">
-                                Creating your logo...
+                                Criando sua logo...
                               </p>
                             </motion.div>
                           ) : generatedLogo?.svg ? (
@@ -432,7 +439,7 @@ export default function Home() {
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0 }}
-                              className="w-full h-full flex flex-col items-center justify-center"
+                              className="w-full max-w-md h-96 flex items-center justify-center overflow-hidden"
                             >
                               <LogoViewer
                                 svgContainer={svgContainer}
@@ -447,7 +454,7 @@ export default function Home() {
                               exit={{ opacity: 0 }}
                               className="text-center text-[#666666]"
                             >
-                              <p>Your logo will appear here</p>
+                              <p>Sua logo aparecerá aqui</p>
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -480,7 +487,7 @@ export default function Home() {
                                 className="flex items-center"
                               >
                                 <CheckIcon className="h-4 w-4" />
-                                <span className="ml-2">Download</span>
+                                <span className="ml-2">Baixar</span>
                               </motion.div>
                             ) : (
                               <motion.div
@@ -492,7 +499,7 @@ export default function Home() {
                                 className="flex items-center"
                               >
                                 <Download className="h-4 w-4" />
-                                <span className="ml-2">Download</span>
+                                <span className="ml-2">Baixar</span>
                               </motion.div>
                             )}
                           </AnimatePresence>

@@ -1,11 +1,7 @@
 "use client";
 
-import type React from "react";
-
-import { Loader2, X } from "lucide-react";
+import { signIn, signUp } from "@/app/actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -14,10 +10,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { createClient } from "@/lib/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Provider } from "@supabase/supabase-js";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { Loader2, X } from "lucide-react";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Checkbox } from "./ui/checkbox";
 import {
   Form,
   FormControl,
@@ -26,15 +32,6 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { signIn, signUp } from "@/app/actions";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { createClient } from "@/lib/supabase/client";
-import { Provider } from "@supabase/supabase-js";
-import { create } from "domain";
-import Link from "next/link";
-import { Checkbox } from "./ui/checkbox";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -46,13 +43,13 @@ const signInSchema = z.object({
 });
 
 const signUpSchema = z.object({
-  email: z.string().email("Email is required"),
+  email: z.string().email("O e-mail é obrigatório"),
   password: z
     .string()
-    .min(6, "Password needs to be at least 6 characters long")
+    .min(6, "A senha precisa ter pelo menos 6 caracteres")
     .max(100),
   terms: z.boolean().refine((value) => value, {
-    message: "You must agree to the terms and conditions",
+    message: "Você deve concordar com os termos e condições",
   }),
 });
 
@@ -71,6 +68,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
     defaultValues: {
       email: "",
       password: "",
+      terms: false,
     },
     resolver: zodResolver(signUpSchema),
   });
@@ -81,14 +79,12 @@ export default function AuthModal({ onClose }: AuthModalProps) {
       return signUp(payload.email, payload.password);
     },
     onSuccess() {
-      toast.success(
-        "Account created successfully. Please, confirm your email.",
-      );
+      toast.success("Conta criada com sucesso. Confirme seu e-mail.");
 
       onClose();
     },
     onError() {
-      toast.error("An error occurred while creating your account.");
+      toast.error("Ocorreu um erro ao criar sua conta.");
     },
   });
 
@@ -98,7 +94,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
       return signIn(payload.email, payload.password);
     },
     async onSuccess() {
-      toast.success("Logged in successfully.");
+      toast.success("Login realizado com sucesso.");
 
       await queryClient.invalidateQueries({
         queryKey: ["fetch-user"],
@@ -115,7 +111,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
       onClose();
     },
     onError() {
-      toast.error("An error occurred while logging in.");
+      toast.error("Ocorreu um erro ao fazer login.");
     },
   });
 
@@ -146,7 +142,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
 
     if (error) {
       console.error("OAuth error:", error.message);
-      toast.error("Failed to sign in with GitHub.");
+      toast.error("Falha ao entrar com o GitHub.");
       return;
     }
 
@@ -172,21 +168,21 @@ export default function AuthModal({ onClose }: AuthModalProps) {
             onClick={onClose}
           >
             <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">Fechar</span>
           </Button>
 
           <CardHeader>
-            <CardTitle className="text-2xl text-center">Welcome</CardTitle>
+            <CardTitle className="text-2xl text-center">Bem-vindo</CardTitle>
             <CardDescription className="text-center">
-              Sign in to save and manage your logos
+              Entre para salvar e gerenciar seus logos
             </CardDescription>
           </CardHeader>
 
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                <TabsTrigger value="signin">Entrar</TabsTrigger>
+                <TabsTrigger value="signup">Criar conta</TabsTrigger>
               </TabsList>
 
               <TabsContent value="signin">
@@ -196,7 +192,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                     className="space-y-4"
                   >
                     <div className="space-y-2">
-                      <Label htmlFor="signin-email">Email</Label>
+                      <Label htmlFor="signin-email">E-mail</Label>
                       <FormField
                         name="email"
                         control={signInForm.control}
@@ -206,7 +202,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                             id="signin-email"
                             type="email"
                             {...field}
-                            placeholder="your@email.com"
+                            placeholder="seu@email.com"
                             required
                             autoComplete="email"
                             autoFocus
@@ -216,7 +212,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="signin-password">Password</Label>
+                      <Label htmlFor="signin-password">Senha</Label>
                       <FormField
                         name="password"
                         control={signInForm.control}
@@ -242,7 +238,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                       {isSigningIn && (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       )}
-                      {isSigningIn ? "Signing In..." : "Sign In"}
+                      {isSigningIn ? "Entrando..." : "Entrar"}
                     </Button>
                   </form>
                 </Form>
@@ -260,13 +256,13 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                         control={signUpForm.control}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel htmlFor="signup-email">Email</FormLabel>
+                            <FormLabel htmlFor="signup-email">E-mail</FormLabel>
                             <FormControl>
                               <Input
                                 id="signup-email"
                                 type="email"
                                 {...field}
-                                placeholder="your@email.com"
+                                placeholder="seu@email.com"
                                 required
                                 autoComplete="email"
                               />
@@ -283,7 +279,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel htmlFor="signup-password">
-                              Password
+                              Senha
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -313,13 +309,13 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                               />
                             </FormControl>
                             <FormLabel>
-                              Accept{" "}
+                              Aceito os{" "}
                               <Link
                                 className="underline"
                                 href="/tos"
                                 target="_blank"
                               >
-                                terms and conditions
+                                termos e condições
                               </Link>
                             </FormLabel>
                             <div className="w-full mt-2">
@@ -338,7 +334,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                       {isSigningUp && (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       )}
-                      {isSigningUp ? "Signing Up..." : "Create Account"}
+                      {isSigningUp ? "Criando conta..." : "Criar conta"}
                     </Button>
                   </form>
                 </Form>
@@ -353,7 +349,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-white px-2 text-gray-500">
-                  Or continue with
+                  Ou continue com
                 </span>
               </div>
             </div>
