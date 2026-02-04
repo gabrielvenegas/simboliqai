@@ -35,7 +35,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="manifest" href="/site.webmanifest" />
       </head>
-      <body className={`${inter.className} dark`}>
+      <body className={`${inter.className}`}>
         <QueryClientProvider>{children}</QueryClientProvider>
         <Toaster theme="light" richColors />
       </body>
